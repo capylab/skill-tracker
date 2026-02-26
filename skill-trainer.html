@@ -14,18 +14,45 @@
   .view { display: none; padding: 2rem; max-width: 1200px; margin: 0 auto; }
   .view.active { display: block; }
 
+  /* FOCUS BAR */
+  .focus-bar { background: #e2e8f0; border: 2px dashed #cbd5e0; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; min-height: 60px; transition: all 0.3s; }
+  .focus-bar h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #4a5568; margin-bottom: 0.75rem; }
+  .focus-bar.drag-highlight { background: linear-gradient(135deg, #c6f6d5, #9ae6b4); border-color: #38a169; box-shadow: 0 0 14px rgba(56,161,105,0.4); }
+  .focus-bar.dragover { background: linear-gradient(135deg, #9ae6b4, #68d391); border-color: #2f855a; box-shadow: 0 0 18px rgba(56,161,105,0.6); }
+  .focus-bar .focus-cards { display: flex; flex-wrap: wrap; gap: 0.5rem; min-height: 36px; }
+  .focus-bar .card { margin-bottom: 0; }
+  .focus-bar .card .unfocus-btn { font-size: 0.7rem; background: none; border: none; color: #718096; cursor: pointer; margin-left: 0.5rem; opacity: 0.6; }
+  .focus-bar .card .unfocus-btn:hover { opacity: 1; }
+  .focus-empty { color: #a0aec0; font-size: 0.8rem; font-style: italic; padding: 0.25rem; }
+
   /* KANBAN */
   .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
   .column { background: #e2e8f0; border-radius: 8px; padding: 1rem; min-height: 300px; }
   .column h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #4a5568; margin-bottom: 1rem; }
-  .card { background: white; border-radius: 6px; padding: 0.75rem; margin-bottom: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: grab; }
+  .card { background: white; border-radius: 6px; padding: 0.75rem; margin-bottom: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: grab; position: relative; }
   .card:active { cursor: grabbing; opacity: 0.7; }
   .card .tag { font-size: 0.7rem; background: #bee3f8; color: #2b6cb0; padding: 2px 6px; border-radius: 10px; display: inline-block; margin-bottom: 4px; }
   .card p { font-size: 0.85rem; font-weight: 600; }
   .card small { color: #718096; font-size: 0.75rem; }
+  .card small a { color: #3182ce; text-decoration: underline; }
+  .card small a:hover { color: #2b6cb0; }
+  .card .card-actions { position: absolute; top: 6px; right: 6px; display: flex; gap: 2px; opacity: 0; transition: opacity 0.15s; }
+  .card:hover .card-actions { opacity: 1; }
+  .card-actions button { background: none; border: none; cursor: pointer; font-size: 0.75rem; color: #a0aec0; padding: 2px 4px; border-radius: 3px; }
+  .card-actions button:hover { background: #edf2f7; color: #4a5568; }
+  .card.focused-indicator { border-left: 3px solid #38a169; }
   .add-card { width: 100%; margin-top: 0.5rem; background: none; border: 2px dashed #cbd5e0; border-radius: 6px; padding: 0.5rem; color: #718096; cursor: pointer; font-size: 0.85rem; }
   .add-card:hover { border-color: #a0aec0; color: #4a5568; }
   .column.dragover { background: #bee3f8; }
+
+  /* ARCHIVE */
+  .archive-section { margin-top: 0.75rem; border-top: 1px solid #cbd5e0; padding-top: 0.5rem; }
+  .archive-toggle { background: none; border: none; color: #a0aec0; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 0; }
+  .archive-toggle:hover { color: #718096; }
+  .archive-cards { display: none; margin-top: 0.5rem; }
+  .archive-cards.open { display: block; }
+  .archive-cards .card { opacity: 0.55; background: #f7fafc; }
+  .archive-cards .card:hover { opacity: 0.8; }
 
   /* LOG */
   .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
@@ -41,12 +68,27 @@
   .btn-sm { font-size: 0.8rem; padding: 0.3rem 0.7rem; }
   .btn-danger { background: #e53e3e; }
   .btn-danger:hover { background: #c53030; }
+  .btn-secondary { background: #718096; }
+  .btn-secondary:hover { background: #4a5568; }
   .entry { background: white; border-radius: 8px; padding: 1.2rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
   .entry-date { font-size: 0.75rem; color: #a0aec0; margin-bottom: 0.5rem; }
   .entry h4 { color: #2d3748; margin-bottom: 0.5rem; }
   .entry p { font-size: 0.85rem; color: #4a5568; margin-bottom: 0.3rem; }
   .entry .skills-used { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 0.5rem; }
   .skill-chip { font-size: 0.7rem; background: #c6f6d5; color: #276749; padding: 2px 8px; border-radius: 10px; }
+  .entry-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+
+  /* SKILL PICKER */
+  .skill-picker { position: relative; }
+  .skill-picker-input { width: 100%; padding: 0.6rem; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 0.9rem; font-family: inherit; }
+  .skill-picker-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .skill-picker-chip { font-size: 0.75rem; background: #c6f6d5; color: #276749; padding: 3px 8px; border-radius: 10px; cursor: pointer; border: none; }
+  .skill-picker-chip:hover { background: #9ae6b4; }
+  .skill-picker-chip.selected { background: #276749; color: white; }
+  .skill-picker-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #cbd5e0; border-top: none; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 10; display: none; }
+  .skill-picker-suggestions.open { display: block; }
+  .skill-picker-suggestion { padding: 0.5rem 0.75rem; cursor: pointer; font-size: 0.85rem; }
+  .skill-picker-suggestion:hover { background: #edf2f7; }
 
   /* EXPORT */
   .export-box { background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -64,7 +106,7 @@
 <body>
 
 <header>
-  <h1>🧠 Skill Tracker</h1>
+  <h1>&#129504; Skill Tracker</h1>
   <nav>
     <button class="active" onclick="showView('kanban', this)">Skill Board</button>
     <button onclick="showView('log', this)">Learning Log</button>
@@ -73,33 +115,44 @@
 </header>
 
 <div id="kanban" class="view active">
+  <div class="focus-bar" id="focus-bar">
+    <h3>&#127919; Heute im Fokus</h3>
+    <div class="focus-cards" id="focus-cards"></div>
+  </div>
   <div class="kanban" id="kanban-board"></div>
 </div>
 
 <div id="log" class="view">
-  <div class="log-form">
-    <h3>📝 Neuer Eintrag</h3>
+  <div class="log-form" id="log-form-container">
+    <h3 id="log-form-title">&#128221; Neuer Eintrag</h3>
     <div class="form-row">
       <label>Was habe ich heute gemacht / gelernt?</label>
       <textarea id="log-learned" placeholder="z.B. Agent Team mit LangGraph aufgesetzt..."></textarea>
     </div>
     <div class="form-row">
-      <label>Welchen Skill hat das gestärkt?</label>
-      <input id="log-skill" placeholder="z.B. Multi-Agent Systems, LangGraph">
+      <label>Welchen Skill hat das gest&auml;rkt?</label>
+      <div class="skill-picker" id="skill-picker">
+        <input class="skill-picker-input" id="log-skill" placeholder="Skill ausw&auml;hlen oder Freitext eingeben..." autocomplete="off">
+        <div class="skill-picker-suggestions" id="skill-suggestions"></div>
+        <div class="skill-picker-chips" id="skill-chips"></div>
+      </div>
     </div>
     <div class="form-row">
       <label>Was will ich vertiefen?</label>
       <input id="log-next" placeholder="z.B. Tool Calling tiefer verstehen">
     </div>
-    <button class="btn" onclick="addLogEntry()">Eintrag speichern</button>
+    <div style="display:flex;gap:0.5rem;">
+      <button class="btn" id="log-save-btn" onclick="addLogEntry()">Eintrag speichern</button>
+      <button class="btn btn-secondary" id="log-cancel-btn" style="display:none;" onclick="cancelEditLog()">Abbrechen</button>
+    </div>
   </div>
   <div id="log-entries"></div>
 </div>
 
 <div id="export" class="view">
   <div class="export-box">
-    <h2>📤 Erfolge kommunizieren</h2>
-    <p style="margin-bottom:1rem;font-size:0.9rem;color:#4a5568;">Hier siehst du eine Zusammenfassung deiner Learnings – ideal für Stand-ups, Retros oder Check-ins.</p>
+    <h2>&#128228; Erfolge kommunizieren</h2>
+    <p style="margin-bottom:1rem;font-size:0.9rem;color:#4a5568;">Hier siehst du eine Zusammenfassung deiner Learnings &ndash; ideal f&uuml;r Stand-ups, Retros oder Check-ins.</p>
     <button class="btn" onclick="generateExport()">Zusammenfassung generieren</button>
     <button class="btn" style="background:#38a169;margin-left:0.5rem;" onclick="copyExport()">Kopieren</button>
     <br><br>
@@ -107,10 +160,10 @@
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal for Add/Edit Skill -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <h3>Neuen Skill hinzufügen</h3>
+    <h3 id="modal-heading">Neuen Skill hinzuf&uuml;gen</h3>
     <div class="form-row">
       <label>Skill / Technologie</label>
       <input id="modal-title" placeholder="z.B. LangGraph, Azure DevOps...">
@@ -121,17 +174,17 @@
     </div>
     <div class="form-row">
       <label>Notiz (optional)</label>
-      <input id="modal-note" placeholder="Kurze Beschreibung">
+      <textarea id="modal-note" placeholder="Kurze Beschreibung oder Link" style="height:60px;resize:vertical;width:100%;padding:0.6rem;border:1px solid #cbd5e0;border-radius:6px;font-size:0.9rem;font-family:inherit;"></textarea>
     </div>
     <div class="modal-btns">
       <button class="btn" style="background:#718096" onclick="closeModal()">Abbrechen</button>
-      <button class="btn" onclick="saveCard()">Hinzufügen</button>
+      <button class="btn" id="modal-save-btn" onclick="saveCard()">Hinzuf&uuml;gen</button>
     </div>
   </div>
 </div>
 
 <script>
-const COLS = ['Erkundet', 'Verstanden', 'Angewendet', 'Erklärt'];
+const COLS = ['Entdeckt', 'Verstanden', 'Angewendet', 'Erkl\u00e4rt'];
 let state = JSON.parse(localStorage.getItem('skilltracker') || 'null') || {
   cards: [
     { id: 1, title: 'LangGraph', tag: 'AI', note: 'Agent Workflows', col: 0 },
@@ -139,35 +192,125 @@ let state = JSON.parse(localStorage.getItem('skilltracker') || 'null') || {
     { id: 3, title: 'Multi-Agent Systems', tag: 'AI', note: 'Agent Team Pattern', col: 0 },
   ],
   log: [],
+  focused: [],
+  archived: [],
   nextId: 10
 };
+
+// Migrate older state that lacks focused/archived
+if (!state.focused) state.focused = [];
+if (!state.archived) state.archived = [];
+
 let dragCard = null;
 let addingToCol = 0;
+let editingCardId = null;
+let editingLogId = null;
+let selectedSkills = [];
 
 function save() { localStorage.setItem('skilltracker', JSON.stringify(state)); }
 
+// -- Linkify helper: turn URLs in text into clickable links --
+function linkify(text) {
+  if (!text) return '';
+  const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return escaped.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+}
+
+// -- Get all known skill titles (for picker) --
+function getAllSkillTitles() {
+  const titles = new Set();
+  state.cards.forEach(c => titles.add(c.title));
+  state.log.forEach(e => {
+    if (e.skill) e.skill.split(',').forEach(s => { const t = s.trim(); if (t) titles.add(t); });
+  });
+  return [...titles].sort();
+}
+
+// ========== FOCUS BAR ==========
+function renderFocusBar() {
+  const container = document.getElementById('focus-cards');
+  const focusedCards = state.cards.filter(c => state.focused.includes(c.id));
+  if (focusedCards.length === 0) {
+    container.innerHTML = '<div class="focus-empty">Skills hierher ziehen, um den Tagesfokus zu setzen</div>';
+  } else {
+    container.innerHTML = '';
+    focusedCards.forEach(card => {
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.draggable = true;
+      el.innerHTML = `<div class="card-actions"><button class="unfocus-btn" title="Aus Fokus entfernen" onclick="unfocus(${card.id})" style="opacity:0.6;font-size:0.75rem;background:none;border:none;color:#718096;cursor:pointer;padding:2px 4px;">&#10005;</button></div><div class="tag">${card.tag||'Skill'}</div><p>${card.title}</p><small>${linkify(card.note||'')}</small>`;
+      el.addEventListener('dragstart', () => { dragCard = card; el.style.opacity = '0.5'; document.getElementById('focus-bar').classList.add('drag-highlight'); });
+      el.addEventListener('dragend', () => { el.style.opacity = '1'; dragCard = null; document.getElementById('focus-bar').classList.remove('drag-highlight'); renderKanban(); });
+      container.appendChild(el);
+    });
+  }
+
+  // Drag-and-drop on focus bar
+  const bar = document.getElementById('focus-bar');
+  bar.ondragover = e => { e.preventDefault(); bar.classList.add('dragover'); };
+  bar.ondragleave = () => bar.classList.remove('dragover');
+  bar.ondrop = () => {
+    bar.classList.remove('dragover');
+    if (dragCard && !state.focused.includes(dragCard.id)) {
+      state.focused.push(dragCard.id);
+      save(); renderKanban();
+    }
+  };
+}
+
+function unfocus(id) {
+  state.focused = state.focused.filter(fid => fid !== id);
+  save(); renderKanban();
+}
+
+// ========== KANBAN ==========
 function renderKanban() {
+  renderFocusBar();
   const board = document.getElementById('kanban-board');
   board.innerHTML = '';
   COLS.forEach((col, ci) => {
     const div = document.createElement('div');
     div.className = 'column';
     div.dataset.col = ci;
-    div.innerHTML = `<h3>${col} <span style="background:#cbd5e0;border-radius:10px;padding:1px 7px;font-size:0.75rem;">${state.cards.filter(c=>c.col===ci).length}</span></h3>`;
-    state.cards.filter(c => c.col === ci).forEach(card => {
-      const el = document.createElement('div');
-      el.className = 'card';
-      el.draggable = true;
-      el.innerHTML = `<div class="tag">${card.tag||'Skill'}</div><p>${card.title}</p><small>${card.note||''}</small>`;
-      el.addEventListener('dragstart', () => { dragCard = card; el.style.opacity = '0.5'; });
-      el.addEventListener('dragend', () => { el.style.opacity = '1'; dragCard = null; });
-      div.appendChild(el);
+
+    const activeCards = state.cards.filter(c => c.col === ci && !state.archived.includes(c.id));
+    const archivedCards = state.cards.filter(c => c.col === ci && state.archived.includes(c.id));
+
+    div.innerHTML = `<h3>${col} <span style="background:#cbd5e0;border-radius:10px;padding:1px 7px;font-size:0.75rem;">${activeCards.length}</span></h3>`;
+
+    activeCards.forEach(card => {
+      div.appendChild(createCardElement(card, false));
     });
+
     const btn = document.createElement('button');
     btn.className = 'add-card';
-    btn.textContent = '+ Skill hinzufügen';
+    btn.textContent = '+ Skill hinzuf\u00fcgen';
     btn.onclick = () => openModal(ci);
     div.appendChild(btn);
+
+    // Archive section
+    if (archivedCards.length > 0) {
+      const archSec = document.createElement('div');
+      archSec.className = 'archive-section';
+      const archToggle = document.createElement('button');
+      archToggle.className = 'archive-toggle';
+      archToggle.innerHTML = `&#9656; Archiv (${archivedCards.length})`;
+      const archContainer = document.createElement('div');
+      archContainer.className = 'archive-cards';
+      archToggle.onclick = () => {
+        archContainer.classList.toggle('open');
+        archToggle.innerHTML = archContainer.classList.contains('open')
+          ? `&#9662; Archiv (${archivedCards.length})`
+          : `&#9656; Archiv (${archivedCards.length})`;
+      };
+      archivedCards.forEach(card => {
+        archContainer.appendChild(createCardElement(card, true));
+      });
+      archSec.appendChild(archToggle);
+      archSec.appendChild(archContainer);
+      div.appendChild(archSec);
+    }
+
     div.addEventListener('dragover', e => { e.preventDefault(); div.classList.add('dragover'); });
     div.addEventListener('dragleave', () => div.classList.remove('dragover'));
     div.addEventListener('drop', () => {
@@ -178,29 +321,234 @@ function renderKanban() {
   });
 }
 
-function openModal(col) { addingToCol = col; document.getElementById('modal').classList.add('open'); }
-function closeModal() { document.getElementById('modal').classList.remove('open'); ['modal-title','modal-tag','modal-note'].forEach(id => document.getElementById(id).value = ''); }
+function createCardElement(card, isArchived) {
+  const el = document.createElement('div');
+  el.className = 'card' + (state.focused.includes(card.id) && !isArchived ? ' focused-indicator' : '');
+  el.draggable = true;
+
+  let actionsHtml = '<div class="card-actions">';
+  actionsHtml += `<button title="Bearbeiten" onclick="editCard(${card.id})">&#9998;</button>`;
+  if (isArchived) {
+    actionsHtml += `<button title="Wiederherstellen" onclick="unarchiveCard(${card.id})">&#8634;</button>`;
+  } else {
+    actionsHtml += `<button title="Archivieren" onclick="archiveCard(${card.id})">&#128451;</button>`;
+  }
+  actionsHtml += '</div>';
+
+  el.innerHTML = `${actionsHtml}<div class="tag">${card.tag||'Skill'}</div><p>${card.title}</p><small>${linkify(card.note||'')}</small>`;
+  el.addEventListener('dragstart', (e) => {
+    dragCard = card;
+    el.style.opacity = '0.5';
+    document.getElementById('focus-bar').classList.add('drag-highlight');
+  });
+  el.addEventListener('dragend', () => {
+    el.style.opacity = '1';
+    dragCard = null;
+    document.getElementById('focus-bar').classList.remove('drag-highlight');
+    renderKanban();
+  });
+  return el;
+}
+
+// ========== CARD CRUD ==========
+function openModal(col, cardId) {
+  addingToCol = col;
+  editingCardId = cardId || null;
+  if (editingCardId) {
+    const card = state.cards.find(c => c.id === editingCardId);
+    document.getElementById('modal-heading').textContent = 'Skill bearbeiten';
+    document.getElementById('modal-save-btn').textContent = 'Speichern';
+    document.getElementById('modal-title').value = card.title;
+    document.getElementById('modal-tag').value = card.tag || '';
+    document.getElementById('modal-note').value = card.note || '';
+  } else {
+    document.getElementById('modal-heading').textContent = 'Neuen Skill hinzuf\u00fcgen';
+    document.getElementById('modal-save-btn').textContent = 'Hinzuf\u00fcgen';
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  editingCardId = null;
+  ['modal-title','modal-tag','modal-note'].forEach(id => document.getElementById(id).value = '');
+}
+
 function saveCard() {
   const title = document.getElementById('modal-title').value.trim();
   if (!title) return;
-  state.cards.push({ id: state.nextId++, title, tag: document.getElementById('modal-tag').value.trim()||'Skill', note: document.getElementById('modal-note').value.trim(), col: addingToCol });
+  if (editingCardId) {
+    const card = state.cards.find(c => c.id === editingCardId);
+    card.title = title;
+    card.tag = document.getElementById('modal-tag').value.trim() || 'Skill';
+    card.note = document.getElementById('modal-note').value.trim();
+  } else {
+    state.cards.push({
+      id: state.nextId++,
+      title,
+      tag: document.getElementById('modal-tag').value.trim() || 'Skill',
+      note: document.getElementById('modal-note').value.trim(),
+      col: addingToCol
+    });
+  }
   save(); closeModal(); renderKanban();
 }
 
+function editCard(id) {
+  const card = state.cards.find(c => c.id === id);
+  openModal(card.col, id);
+}
+
+function archiveCard(id) {
+  state.archived.push(id);
+  state.focused = state.focused.filter(fid => fid !== id);
+  save(); renderKanban();
+}
+
+function unarchiveCard(id) {
+  state.archived = state.archived.filter(aid => aid !== id);
+  save(); renderKanban();
+}
+
+// ========== SKILL PICKER ==========
+function initSkillPicker() {
+  const input = document.getElementById('log-skill');
+  const sugBox = document.getElementById('skill-suggestions');
+
+  input.addEventListener('input', () => {
+    const val = input.value.trim().toLowerCase();
+    const allSkills = getAllSkillTitles().filter(s => !selectedSkills.includes(s));
+    if (val.length === 0) {
+      sugBox.classList.remove('open');
+      return;
+    }
+    const matches = allSkills.filter(s => s.toLowerCase().includes(val));
+    if (matches.length === 0) {
+      sugBox.classList.remove('open');
+      return;
+    }
+    sugBox.innerHTML = '';
+    matches.forEach(s => {
+      const d = document.createElement('div');
+      d.className = 'skill-picker-suggestion';
+      d.textContent = s;
+      d.onmousedown = (e) => { e.preventDefault(); addSkillChip(s); input.value = ''; sugBox.classList.remove('open'); };
+      sugBox.appendChild(d);
+    });
+    sugBox.classList.add('open');
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const val = input.value.replace(/,/g, '').trim();
+      if (val && !selectedSkills.includes(val)) {
+        addSkillChip(val);
+      }
+      input.value = '';
+      sugBox.classList.remove('open');
+    }
+  });
+
+  input.addEventListener('blur', () => {
+    setTimeout(() => sugBox.classList.remove('open'), 200);
+  });
+}
+
+function renderSkillChips() {
+  const container = document.getElementById('skill-chips');
+  const allSkills = getAllSkillTitles().filter(s => !selectedSkills.includes(s));
+  container.innerHTML = '';
+  // Selected chips first
+  selectedSkills.forEach(s => {
+    const chip = document.createElement('button');
+    chip.className = 'skill-picker-chip selected';
+    chip.textContent = s + ' \u00d7';
+    chip.type = 'button';
+    chip.onclick = () => { removeSkillChip(s); };
+    container.appendChild(chip);
+  });
+  // Available chips
+  allSkills.forEach(s => {
+    const chip = document.createElement('button');
+    chip.className = 'skill-picker-chip';
+    chip.textContent = s;
+    chip.type = 'button';
+    chip.onclick = () => { addSkillChip(s); };
+    container.appendChild(chip);
+  });
+}
+
+function addSkillChip(name) {
+  if (!selectedSkills.includes(name)) {
+    selectedSkills.push(name);
+  }
+  renderSkillChips();
+}
+
+function removeSkillChip(name) {
+  selectedSkills = selectedSkills.filter(s => s !== name);
+  renderSkillChips();
+}
+
+// ========== LOG ==========
 function addLogEntry() {
   const learned = document.getElementById('log-learned').value.trim();
   if (!learned) return;
-  const entry = {
-    id: state.nextId++,
-    date: new Date().toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric', hour:'2-digit', minute:'2-digit'}),
-    learned,
-    skill: document.getElementById('log-skill').value.trim(),
-    next: document.getElementById('log-next').value.trim()
-  };
-  state.log.unshift(entry);
+
+  // Combine selected chips + any remaining input text
+  const inputVal = document.getElementById('log-skill').value.trim();
+  if (inputVal && !selectedSkills.includes(inputVal)) selectedSkills.push(inputVal);
+  const skillStr = selectedSkills.join(', ');
+
+  if (editingLogId) {
+    const entry = state.log.find(e => e.id === editingLogId);
+    entry.learned = learned;
+    entry.skill = skillStr;
+    entry.next = document.getElementById('log-next').value.trim();
+    editingLogId = null;
+    document.getElementById('log-form-title').innerHTML = '&#128221; Neuer Eintrag';
+    document.getElementById('log-save-btn').textContent = 'Eintrag speichern';
+    document.getElementById('log-cancel-btn').style.display = 'none';
+  } else {
+    const entry = {
+      id: state.nextId++,
+      date: new Date().toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric', hour:'2-digit', minute:'2-digit'}),
+      learned,
+      skill: skillStr,
+      next: document.getElementById('log-next').value.trim()
+    };
+    state.log.unshift(entry);
+  }
   save();
   ['log-learned','log-skill','log-next'].forEach(id => document.getElementById(id).value = '');
+  selectedSkills = [];
+  renderSkillChips();
   renderLog();
+}
+
+function cancelEditLog() {
+  editingLogId = null;
+  document.getElementById('log-form-title').innerHTML = '&#128221; Neuer Eintrag';
+  document.getElementById('log-save-btn').textContent = 'Eintrag speichern';
+  document.getElementById('log-cancel-btn').style.display = 'none';
+  ['log-learned','log-skill','log-next'].forEach(id => document.getElementById(id).value = '');
+  selectedSkills = [];
+  renderSkillChips();
+}
+
+function editLogEntry(id) {
+  const entry = state.log.find(e => e.id === id);
+  editingLogId = id;
+  document.getElementById('log-learned').value = entry.learned;
+  document.getElementById('log-next').value = entry.next || '';
+  document.getElementById('log-skill').value = '';
+  selectedSkills = entry.skill ? entry.skill.split(',').map(s => s.trim()).filter(Boolean) : [];
+  renderSkillChips();
+  document.getElementById('log-form-title').innerHTML = '&#9998; Eintrag bearbeiten';
+  document.getElementById('log-save-btn').textContent = '\u00c4nderungen speichern';
+  document.getElementById('log-cancel-btn').style.display = 'inline-block';
+  document.getElementById('log-form-container').scrollIntoView({ behavior: 'smooth' });
 }
 
 function renderLog() {
@@ -210,25 +558,35 @@ function renderLog() {
       <div class="entry-date">${e.date}</div>
       <p>${e.learned}</p>
       ${e.skill ? `<div class="skills-used">${e.skill.split(',').map(s=>`<span class="skill-chip">${s.trim()}</span>`).join('')}</div>` : ''}
-      ${e.next ? `<p style="margin-top:0.5rem;color:#718096;">➡ Vertiefen: ${e.next}</p>` : ''}
-      <button class="btn btn-sm btn-danger" style="margin-top:0.75rem;" onclick="deleteEntry(${e.id})">Löschen</button>
+      ${e.next ? `<p style="margin-top:0.5rem;color:#718096;">\u27a1 Vertiefen: ${e.next}</p>` : ''}
+      <div class="entry-actions">
+        <button class="btn btn-sm" onclick="editLogEntry(${e.id})">&#9998; Bearbeiten</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteEntry(${e.id})">L\u00f6schen</button>
+      </div>
     </div>`).join('');
 }
 
 function deleteEntry(id) { state.log = state.log.filter(e => e.id !== id); save(); renderLog(); }
 
+// ========== EXPORT ==========
 function generateExport() {
-  const applied = state.cards.filter(c => c.col >= 2);
+  const applied = state.cards.filter(c => c.col >= 2 && !state.archived.includes(c.id));
+  const focused = state.cards.filter(c => state.focused.includes(c.id));
   const recent = state.log.slice(0, 10);
   let out = '=== SKILL TRACKER EXPORT ===\n';
   out += `Datum: ${new Date().toLocaleDateString('de-DE')}\n\n`;
-  out += `--- Angewendete & erklärte Skills (${applied.length}) ---\n`;
-  applied.forEach(c => out += `• ${c.title} [${c.tag}] – ${COLS[c.col]}\n`);
+  if (focused.length > 0) {
+    out += `--- Heute im Fokus (${focused.length}) ---\n`;
+    focused.forEach(c => out += `\u2b50 ${c.title} [${c.tag}] \u2013 ${COLS[c.col]}\n`);
+    out += '\n';
+  }
+  out += `--- Angewendete & erkl\u00e4rte Skills (${applied.length}) ---\n`;
+  applied.forEach(c => out += `\u2022 ${c.title} [${c.tag}] \u2013 ${COLS[c.col]}\n`);
   out += `\n--- Letzte Learnings ---\n`;
   recent.forEach(e => {
     out += `\n[${e.date}] ${e.learned}`;
     if (e.skill) out += `\n  Skills: ${e.skill}`;
-    if (e.next) out += `\n  Nächste Schritte: ${e.next}`;
+    if (e.next) out += `\n  N\u00e4chste Schritte: ${e.next}`;
     out += '\n';
   });
   document.getElementById('export-output').textContent = out;
@@ -244,10 +602,13 @@ function showView(id, btn) {
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
-  if (id === 'log') renderLog();
+  if (id === 'log') { renderLog(); renderSkillChips(); }
 }
 
+// Init
+initSkillPicker();
 renderKanban();
+renderSkillChips();
 </script>
 </body>
 </html>
