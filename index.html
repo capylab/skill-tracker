@@ -841,34 +841,12 @@ Klick auf "Zusammenfassung generieren"...</pre
                 localStorage.getItem("skilltracker") || "null",
             ) || {
                 version: "v1",
-                lastModified: Date.now(),
-                cards: [
-                    {
-                        id: 1,
-                        title: "LangGraph",
-                        tag: "AI",
-                        note: "Agent Workflows",
-                        col: 0,
-                    },
-                    {
-                        id: 2,
-                        title: "Azure DevOps",
-                        tag: "DevOps",
-                        note: "Pipelines & Boards",
-                        col: 1,
-                    },
-                    {
-                        id: 3,
-                        title: "Multi-Agent Systems",
-                        tag: "AI",
-                        note: "Agent Team Pattern",
-                        col: 0,
-                    },
-                ],
+                lastModified: 0, // 0 = uninitialized; remote always wins on first sync
+                cards: [],
                 log: [],
                 focused: [],
                 archived: [],
-                nextId: 10,
+                nextId: 1,
             };
 
             function migrateState() {
@@ -968,6 +946,8 @@ Klick auf "Zusammenfassung generieren"...</pre
 
             async function pushToGist() {
                 if (!syncReady()) return;
+                // Never push an uninitialized empty state — it would wipe remote data
+                if (state.lastModified === 0) return;
                 setSyncStatus("syncing", "Speichern\u2026");
                 const content = JSON.stringify(state, null, 2);
                 try {
@@ -1013,8 +993,12 @@ Klick auf "Zusammenfassung generieren"...</pre
                     const gist = await resp.json();
                     const file = gist.files["skilltracker.json"];
                     if (!file) {
-                        // First run: no file in Gist yet — push local state to create it
-                        await pushToGist();
+                        // No file in Gist yet — only push if we have real local data
+                        if (state.cards.length > 0 || state.log.length > 0) {
+                            await pushToGist();
+                        } else {
+                            setSyncStatus("idle", "");
+                        }
                         return;
                     }
                     const remote = JSON.parse(file.content);
@@ -1077,7 +1061,8 @@ Klick auf "Zusammenfassung generieren"...</pre
                     JSON.stringify(syncConfig),
                 );
                 updateSettingsStatus();
-                setSyncStatus(syncReady() ? "idle" : "idle", "");
+                // Pull immediately so remote data wins before any local push occurs
+                if (syncReady()) pullFromGist();
             }
 
             function updateSettingsStatus() {
