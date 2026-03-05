@@ -24,13 +24,19 @@
                 color: white;
                 padding: 1rem 2rem;
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
                 gap: 1rem;
+                position: relative;
+                z-index: 50;
             }
             header h1 {
                 font-size: 1.3rem;
                 white-space: nowrap;
+                flex: 1;
+            }
+            nav {
+                display: flex;
+                align-items: center;
             }
             nav button {
                 background: none;
@@ -40,6 +46,10 @@
                 cursor: pointer;
                 font-size: 0.9rem;
                 border-radius: 4px;
+            }
+            nav button:hover {
+                background: #4a5568;
+                color: white;
             }
             nav button.active {
                 background: #4a5568;
@@ -55,31 +65,193 @@
                 display: block;
             }
 
-            /* SYNC STATUS INDICATOR */
-            .sync-indicator {
+            /* SYNC GROUP (right side of header, sibling of nav) */
+            .sync-group {
+                flex: 1;
                 display: flex;
                 align-items: center;
-                gap: 0.5rem;
+                justify-content: flex-end;
+                gap: 0.15rem;
+                padding-left: 0.75rem;
+                border-left: 1px solid #4a5568;
+            }
+            .sync-label {
+                color: #718096;
                 font-size: 0.8rem;
-                flex-shrink: 0;
+                padding-right: 0.2rem;
+                white-space: nowrap;
+            }
+            .sync-group button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                border-radius: 4px;
+                padding: 3px 7px;
+                font-size: 0.8rem;
+                color: #718096;
+            }
+            .sync-group button:hover {
+                background: #4a5568;
+                color: white;
+            }
+            .sync-group button.active {
+                background: #4a5568;
+                color: white;
+            }
+            .sync-status-wrap {
+                position: relative;
+            }
+            .sync-status-btn {
+                display: flex;
+                align-items: center;
+                gap: 3px;
+                min-width: 3.5rem;
+                white-space: nowrap;
             }
             #sync-status {
+                font-size: 0.8rem;
+            }
+            .sync-chevron {
+                font-size: 0.6rem;
+                opacity: 0.6;
+            }
+            .sync-icon-btn {
+                font-size: 1rem !important;
+                padding: 2px 6px !important;
+            }
+
+            /* REVISIONS DROPDOWN */
+            .revisions-dropdown {
+                display: none;
+                position: absolute;
+                top: calc(100% + 10px);
+                right: 0;
+                background: white;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+                min-width: 290px;
+                max-height: 340px;
+                overflow-y: auto;
+                z-index: 200;
+                color: #1a202c;
+            }
+            .revisions-dropdown.open {
+                display: block;
+            }
+            .revisions-dropdown-header {
+                position: sticky;
+                top: 0;
+                padding: 0.55rem 0.9rem;
+                font-size: 0.7rem;
+                font-weight: 600;
+                color: #718096;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                background: #f7fafc;
+                border-bottom: 1px solid #e2e8f0;
+                border-radius: 8px 8px 0 0;
+            }
+            .revision-item {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.5rem 0.9rem;
+                border-bottom: 1px solid #f7fafc;
+                transition: background 0.1s;
+            }
+            .revision-item:last-child {
+                border-bottom: none;
+            }
+            .revision-item:hover {
+                background: #f7fafc;
+            }
+            .revision-date {
+                flex: 1;
+                font-size: 0.8rem;
+                color: #2d3748;
+                line-height: 1.3;
+            }
+            .revision-tag {
+                font-size: 0.65rem;
                 color: #a0aec0;
                 white-space: nowrap;
             }
-            .sync-indicator button {
+            .revision-restore-btn {
                 background: none;
-                border: 1px solid #4a5568;
-                color: #a0aec0;
-                padding: 2px 8px;
+                border: 1px solid #e2e8f0;
                 border-radius: 4px;
+                color: #718096;
+                font-size: 0.7rem;
+                font-family: inherit;
                 cursor: pointer;
-                font-size: 0.85rem;
-                line-height: 1.4;
+                padding: 2px 8px;
+                white-space: nowrap;
+                transition: all 0.15s;
             }
-            .sync-indicator button:hover {
-                border-color: #718096;
-                color: white;
+            .revision-restore-btn:hover {
+                border-color: #3182ce;
+                color: #3182ce;
+                background: #ebf8ff;
+            }
+            .revisions-empty {
+                padding: 1.25rem;
+                text-align: center;
+                color: #a0aec0;
+                font-size: 0.8rem;
+            }
+
+            /* PREVIEW / TIME-TRAVEL OVERLAY */
+            .preview-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.28);
+                backdrop-filter: blur(1px);
+                z-index: 40;
+                align-items: flex-end;
+                justify-content: center;
+                padding-bottom: 2.5rem;
+            }
+            .preview-overlay.active {
+                display: flex;
+            }
+            .preview-bar {
+                background: white;
+                border-radius: 14px;
+                padding: 1rem 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 2rem;
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.22);
+                border: 2px solid #ed8936;
+                max-width: 620px;
+                width: calc(100% - 4rem);
+            }
+            .preview-bar-info {
+                display: flex;
+                align-items: center;
+                gap: 0.9rem;
+            }
+            .preview-bar-icon {
+                font-size: 1.6rem;
+                line-height: 1;
+            }
+            .preview-bar-title {
+                font-size: 0.9rem;
+                color: #2d3748;
+                font-weight: 600;
+            }
+            .preview-bar-sub {
+                font-size: 0.75rem;
+                color: #ed8936;
+                margin-top: 3px;
+            }
+            .preview-bar-actions {
+                display: flex;
+                gap: 0.5rem;
+                flex-shrink: 0;
             }
 
             /* FOCUS BAR */
@@ -577,27 +749,48 @@
     <body>
         <header>
             <h1>&#129504; Skill Tracker</h1>
-            <div class="sync-indicator" id="sync-indicator">
-                <span id="sync-status"></span>
-                <button
-                    onclick="manualSync()"
-                    id="sync-btn"
-                    title="Manuell synchronisieren"
-                    style="display: none"
-                >
-                    &#8635;
-                </button>
-            </div>
             <nav>
                 <button class="active" onclick="showView('kanban', this)">
                     Skill Board
                 </button>
                 <button onclick="showView('log', this)">Learning Log</button>
-                <button onclick="showView('export', this)">Export</button>
-                <button onclick="showView('settings', this)">
-                    &#9881; Sync
-                </button>
+                <button onclick="showView('summary', this)">Summary</button>
             </nav>
+            <div class="sync-group">
+                <span class="sync-label">Sync:</span>
+                <div class="sync-status-wrap">
+                    <button
+                        class="sync-status-btn"
+                        id="sync-status-btn"
+                        onclick="toggleRevisions()"
+                        title="Revisionen anzeigen"
+                    >
+                        <span id="sync-status">&#8211;</span
+                        ><span class="sync-chevron" id="sync-chevron" style="display:none">&#9660;</span>
+                    </button>
+                    <div
+                        class="revisions-dropdown"
+                        id="revisions-dropdown"
+                    ></div>
+                </div>
+                <button
+                    class="sync-icon-btn"
+                    id="sync-btn"
+                    onclick="manualSync()"
+                    title="Jetzt synchronisieren"
+                    style="display: none"
+                >
+                    &#8635;
+                </button>
+                <button
+                    class="sync-icon-btn"
+                    id="settings-nav-btn"
+                    onclick="showView('settings', this)"
+                    title="Sync-Einstellungen"
+                >
+                    &#9881;
+                </button>
+            </div>
         </header>
 
         <div id="kanban" class="view active">
@@ -662,7 +855,7 @@
             <div id="log-entries"></div>
         </div>
 
-        <div id="export" class="view">
+        <div id="summary" class="view">
             <div class="export-box">
                 <h2>&#128228; Erfolge kommunizieren</h2>
                 <p
@@ -818,6 +1011,40 @@ Klick auf "Zusammenfassung generieren"...</pre
             </div>
         </div>
 
+        <!-- Preview / time-travel overlay -->
+        <div class="preview-overlay" id="preview-overlay">
+            <div class="preview-bar">
+                <div class="preview-bar-info">
+                    <span class="preview-bar-icon">&#128065;</span>
+                    <div>
+                        <div class="preview-bar-title">
+                            Revision vom
+                            <span id="preview-date"></span>
+                        </div>
+                        <div class="preview-bar-sub">
+                            Nur Ansicht &mdash; alle &Auml;nderungen sind
+                            gesperrt
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-bar-actions">
+                    <button
+                        class="btn btn-secondary btn-sm"
+                        onclick="cancelPreview()"
+                    >
+                        Abbrechen
+                    </button>
+                    <button
+                        class="btn btn-sm"
+                        style="background: #dd6b20"
+                        onclick="confirmRevert()"
+                    >
+                        Diesen Stand &uuml;bernehmen
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <script>
             const COLS = [
                 "Entdeckt",
@@ -896,6 +1123,8 @@ Klick auf "Zusammenfassung generieren"...</pre
             let editingLogId = null;
             let selectedSkills = [];
             let pushTimer = null;
+            let liveState = null;    // saved while previewing a revision
+            let previewActive = false;
 
             // ========== PERSISTENCE ==========
             function saveLocalOnly() {
@@ -914,14 +1143,19 @@ Klick auf "Zusammenfassung generieren"...</pre
             }
 
             function setSyncStatus(status, msg) {
+                if (previewActive) return; // preview indicator takes priority
                 const el = document.getElementById("sync-status");
-                const btn = document.getElementById("sync-btn");
+                const refreshBtn = document.getElementById("sync-btn");
+                const chevron = document.getElementById("sync-chevron");
                 if (!syncReady()) {
-                    el.textContent = "";
-                    btn.style.display = "none";
+                    el.style.color = "#718096";
+                    el.textContent = "\u2013";
+                    refreshBtn.style.display = "none";
+                    chevron.style.display = "none";
                     return;
                 }
-                btn.style.display = "";
+                refreshBtn.style.display = "";
+                chevron.style.display = "";
                 const icons = {
                     idle: "\u2713",
                     syncing: "\u27f3",
@@ -1028,6 +1262,132 @@ Klick auf "Zusammenfassung generieren"...</pre
             function renderAll() {
                 renderKanban();
                 renderLog();
+            }
+
+            // ========== REVISIONS DROPDOWN ==========
+            async function toggleRevisions() {
+                if (previewActive) return;
+                const dropdown = document.getElementById("revisions-dropdown");
+                if (dropdown.classList.contains("open")) {
+                    dropdown.classList.remove("open");
+                    return;
+                }
+                if (!syncReady()) return;
+                dropdown.classList.add("open");
+                dropdown.innerHTML =
+                    '<div class="revisions-empty">Lade Revisionen\u2026</div>';
+                try {
+                    const resp = await fetch(
+                        `https://api.github.com/gists/${syncConfig.gistId}/commits?per_page=25`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${syncConfig.token}`,
+                            },
+                        },
+                    );
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const commits = await resp.json();
+                    if (commits.length === 0) {
+                        dropdown.innerHTML =
+                            '<div class="revisions-empty">Keine Revisionen gefunden.</div>';
+                        return;
+                    }
+                    dropdown.innerHTML =
+                        '<div class="revisions-dropdown-header">Gespeicherte St\u00e4nde</div>';
+                    commits.forEach((commit, i) => {
+                        const date = new Date(
+                            commit.committed_at,
+                        ).toLocaleString("de-DE", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        });
+                        const item = document.createElement("div");
+                        item.className = "revision-item";
+                        if (i === 0) {
+                            item.innerHTML = `<span class="revision-date">${date}</span><span class="revision-tag">aktuell</span>`;
+                        } else {
+                            item.innerHTML = `<span class="revision-date">${date}</span><button class="revision-restore-btn" onclick="viewRevision('${commit.version}', '${date}')">View</button>`;
+                        }
+                        dropdown.appendChild(item);
+                    });
+                } catch (e) {
+                    dropdown.innerHTML = `<div class="revisions-empty">Fehler: ${e.message}</div>`;
+                }
+            }
+
+            async function viewRevision(sha, dateStr) {
+                document
+                    .getElementById("revisions-dropdown")
+                    .classList.remove("open");
+                setSyncStatus("syncing", "Lade\u2026");
+                try {
+                    const resp = await fetch(
+                        `https://api.github.com/gists/${syncConfig.gistId}/${sha}`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${syncConfig.token}`,
+                            },
+                        },
+                    );
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const gist = await resp.json();
+                    const file = gist.files["skilltracker.json"];
+                    if (!file)
+                        throw new Error(
+                            "Datei nicht in dieser Revision gefunden",
+                        );
+                    // Stash live state, load revision into state
+                    liveState = JSON.parse(JSON.stringify(state));
+                    state = JSON.parse(file.content);
+                    migrateState();
+                    renderAll();
+                    enterPreviewMode(dateStr);
+                } catch (e) {
+                    liveState = null;
+                    setSyncStatus("error", e.message);
+                }
+            }
+
+            function enterPreviewMode(dateStr) {
+                previewActive = true;
+                document.getElementById("preview-date").textContent = dateStr;
+                document
+                    .getElementById("preview-overlay")
+                    .classList.add("active");
+                // Show orange indicator in header
+                const el = document.getElementById("sync-status");
+                const chevron = document.getElementById("sync-chevron");
+                el.style.color = "#ed8936";
+                el.textContent = "\uD83D\uDC41 " + dateStr;
+                if (chevron) chevron.style.display = "none";
+            }
+
+            function exitPreviewMode() {
+                previewActive = false; // must be first so setSyncStatus is unblocked
+                document
+                    .getElementById("preview-overlay")
+                    .classList.remove("active");
+                setSyncStatus(syncReady() ? "idle" : "idle", "");
+            }
+
+            function confirmRevert() {
+                // state already holds the revision; stamp a new lastModified and push
+                exitPreviewMode();
+                liveState = null;
+                save(); // sets lastModified = now, saves locally, schedules push
+                renderAll();
+            }
+
+            function cancelPreview() {
+                if (liveState) {
+                    state = liveState;
+                    liveState = null;
+                }
+                exitPreviewMode();
+                renderAll();
             }
 
             // ========== SETTINGS ==========
@@ -1678,7 +2038,7 @@ Klick auf "Zusammenfassung generieren"...</pre
                     .querySelectorAll(".view")
                     .forEach((v) => v.classList.remove("active"));
                 document
-                    .querySelectorAll("nav button")
+                    .querySelectorAll("nav button, #settings-nav-btn")
                     .forEach((b) => b.classList.remove("active"));
                 document.getElementById(id).classList.add("active");
                 btn.classList.add("active");
@@ -1695,6 +2055,24 @@ Klick auf "Zusammenfassung generieren"...</pre
             renderSkillChips();
             if (syncReady()) setSyncStatus("idle", "");
             if (syncReady() && syncConfig.enabled) pullFromGist();
+
+            // ESC cancels preview mode
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape" && previewActive) cancelPreview();
+            });
+
+            // Close revisions dropdown on outside click
+            document.addEventListener("click", (e) => {
+                const dropdown = document.getElementById("revisions-dropdown");
+                const btn = document.getElementById("sync-status-btn");
+                if (
+                    dropdown.classList.contains("open") &&
+                    !dropdown.contains(e.target) &&
+                    !btn.contains(e.target)
+                ) {
+                    dropdown.classList.remove("open");
+                }
+            });
         </script>
     </body>
 </html>
