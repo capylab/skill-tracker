@@ -26,9 +26,11 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                gap: 1rem;
             }
             header h1 {
                 font-size: 1.3rem;
+                white-space: nowrap;
             }
             nav button {
                 background: none;
@@ -51,6 +53,33 @@
             }
             .view.active {
                 display: block;
+            }
+
+            /* SYNC STATUS INDICATOR */
+            .sync-indicator {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.8rem;
+                flex-shrink: 0;
+            }
+            #sync-status {
+                color: #a0aec0;
+                white-space: nowrap;
+            }
+            .sync-indicator button {
+                background: none;
+                border: 1px solid #4a5568;
+                color: #a0aec0;
+                padding: 2px 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+            .sync-indicator button:hover {
+                border-color: #718096;
+                color: white;
             }
 
             /* FOCUS BAR */
@@ -473,17 +502,101 @@
                 justify-content: flex-end;
                 margin-top: 1rem;
             }
+
+            /* SETTINGS */
+            .settings-box {
+                background: white;
+                border-radius: 8px;
+                padding: 1.5rem;
+                max-width: 500px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+            .settings-box h2 {
+                margin-bottom: 1.5rem;
+            }
+            .token-row {
+                display: flex;
+                gap: 0.5rem;
+            }
+            .token-row input {
+                flex: 1;
+                min-width: 0;
+            }
+            .token-row .icon-btn {
+                background: #edf2f7;
+                border: 1px solid #cbd5e0;
+                border-radius: 6px;
+                cursor: pointer;
+                padding: 0 0.75rem;
+                font-size: 1rem;
+            }
+            .token-row .icon-btn:hover {
+                background: #e2e8f0;
+            }
+            .toggle-row {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            .toggle-row input[type="checkbox"] {
+                width: auto;
+                margin: 0;
+            }
+            .toggle-row label {
+                margin-bottom: 0;
+                cursor: pointer;
+            }
+            .settings-actions {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+                margin-top: 1rem;
+            }
+            .settings-status {
+                margin-top: 0.75rem;
+                font-size: 0.85rem;
+                min-height: 1.2em;
+                color: #718096;
+            }
+            .settings-help {
+                margin-top: 1.5rem;
+                padding-top: 1.5rem;
+                border-top: 1px solid #e2e8f0;
+                font-size: 0.8rem;
+                color: #718096;
+                line-height: 1.7;
+            }
+            .settings-help code {
+                background: #edf2f7;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-family: monospace;
+            }
         </style>
     </head>
     <body>
         <header>
             <h1>&#129504; Skill Tracker</h1>
+            <div class="sync-indicator" id="sync-indicator">
+                <span id="sync-status"></span>
+                <button
+                    onclick="manualSync()"
+                    id="sync-btn"
+                    title="Manuell synchronisieren"
+                    style="display: none"
+                >
+                    &#8635;
+                </button>
+            </div>
             <nav>
                 <button class="active" onclick="showView('kanban', this)">
                     Skill Board
                 </button>
                 <button onclick="showView('log', this)">Learning Log</button>
                 <button onclick="showView('export', this)">Export</button>
+                <button onclick="showView('settings', this)">
+                    &#9881; Sync
+                </button>
             </nav>
         </header>
 
@@ -579,6 +692,78 @@ Klick auf "Zusammenfassung generieren"...</pre
             </div>
         </div>
 
+        <div id="settings" class="view">
+            <div class="settings-box">
+                <h2>&#9881; GitHub Gist Sync</h2>
+                <div class="form-row">
+                    <label>Gist ID</label>
+                    <input
+                        id="settings-gist-id"
+                        placeholder="z.B. a1b2c3d4e5f6..."
+                    />
+                </div>
+                <div class="form-row">
+                    <label>Personal Access Token (Scope: gist)</label>
+                    <div class="token-row">
+                        <input
+                            id="settings-token"
+                            type="password"
+                            placeholder="ghp_..."
+                        />
+                        <button
+                            class="icon-btn"
+                            id="toggle-token-btn"
+                            onclick="toggleTokenVisibility()"
+                            title="Token anzeigen / verbergen"
+                        >
+                            &#128065;
+                        </button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label>Ger&auml;tename (optional)</label>
+                    <input
+                        id="settings-device"
+                        placeholder="z.B. B&uuml;ro-PC, Laptop..."
+                    />
+                </div>
+                <div class="form-row toggle-row">
+                    <input type="checkbox" id="settings-enabled" />
+                    <label for="settings-enabled"
+                        >Auto-Sync aktiviert (bei jeder &Auml;nderung)</label
+                    >
+                </div>
+                <div class="settings-actions">
+                    <button class="btn" onclick="saveSettings()">
+                        Speichern
+                    </button>
+                    <button
+                        class="btn btn-secondary"
+                        onclick="testConnection()"
+                    >
+                        Verbindung testen
+                    </button>
+                </div>
+                <div class="settings-status" id="settings-status"></div>
+                <div class="settings-help">
+                    <strong>Setup in 3 Schritten:</strong><br />
+                    1. Erstelle ein privates GitHub Gist auf
+                    <em>gist.github.com</em><br />
+                    2. Generiere ein PAT unter
+                    <em
+                        >GitHub &rarr; Settings &rarr; Developer settings &rarr;
+                        Personal access tokens</em
+                    >
+                    mit Scope <code>gist</code><br />
+                    3. Gib Gist-ID (aus der URL) und Token hier ein und klicke
+                    Speichern<br /><br />
+                    Die Daten werden als <code>skilltracker.json</code> im Gist
+                    gespeichert. Das Token bleibt nur lokal im Browser &mdash;
+                    es wird nie in den Gist geschrieben.
+                </div>
+            </div>
+        </div>
+
         <!-- Modal for Add/Edit Skill -->
         <div class="modal-overlay" id="modal">
             <div class="modal">
@@ -640,9 +825,23 @@ Klick auf "Zusammenfassung generieren"...</pre
                 "Angewendet",
                 "Erkl\u00e4rt",
             ];
+
+            // Sync config — stored separately, never pushed to Gist
+            let syncConfig =
+                JSON.parse(
+                    localStorage.getItem("skilltracker-sync") || "null",
+                ) || {
+                    gistId: "",
+                    token: "",
+                    enabled: true,
+                    deviceName: "",
+                };
+
             let state = JSON.parse(
                 localStorage.getItem("skilltracker") || "null",
             ) || {
+                version: "v1",
+                lastModified: Date.now(),
                 cards: [
                     {
                         id: 1,
@@ -672,19 +871,23 @@ Klick auf "Zusammenfassung generieren"...</pre
                 nextId: 10,
             };
 
-            // Migrate older state that lacks focused/archived
-            if (!state.focused) state.focused = [];
-            if (!state.archived) state.archived = [];
-            // Migrate focused from plain IDs to {id, ts} objects
-            if (
-                state.focused.length > 0 &&
-                typeof state.focused[0] === "number"
-            ) {
-                state.focused = state.focused.map((id) => ({
-                    id,
-                    ts: Date.now(),
-                }));
+            function migrateState() {
+                if (!state.focused) state.focused = [];
+                if (!state.archived) state.archived = [];
+                // Migrate focused from plain IDs to {id, ts} objects
+                if (
+                    state.focused.length > 0 &&
+                    typeof state.focused[0] === "number"
+                ) {
+                    state.focused = state.focused.map((id) => ({
+                        id,
+                        ts: Date.now(),
+                    }));
+                }
+                if (!state.version) state.version = "v1";
+                if (!state.lastModified) state.lastModified = Date.now();
             }
+            migrateState();
 
             // Reset focus if last focus was before today's 4:00 AM
             function checkFocusReset() {
@@ -698,17 +901,13 @@ Klick auf "Zusammenfassung generieren"...</pre
                     0,
                     0,
                 );
-                // If it's before 4am, the reset boundary is yesterday 4am
                 const resetBoundary =
                     now < today4am
                         ? new Date(today4am.getTime() - 86400000)
                         : today4am;
-                const anyExpired = state.focused.some(
-                    (f) => f.ts < resetBoundary.getTime(),
-                );
-                if (anyExpired) {
+                if (state.focused.some((f) => f.ts < resetBoundary.getTime())) {
                     state.focused = [];
-                    save();
+                    save(); // Push cleared focus to Gist
                 }
             }
             checkFocusReset();
@@ -718,12 +917,226 @@ Klick auf "Zusammenfassung generieren"...</pre
             let editingCardId = null;
             let editingLogId = null;
             let selectedSkills = [];
+            let pushTimer = null;
 
-            function save() {
+            // ========== PERSISTENCE ==========
+            function saveLocalOnly() {
                 localStorage.setItem("skilltracker", JSON.stringify(state));
             }
 
-            // -- Linkify helper: turn URLs in text into clickable links --
+            function save() {
+                state.lastModified = Date.now();
+                saveLocalOnly();
+                if (syncConfig.enabled && syncReady()) schedulePush();
+            }
+
+            // ========== SYNC ENGINE ==========
+            function syncReady() {
+                return !!(syncConfig.gistId && syncConfig.token);
+            }
+
+            function setSyncStatus(status, msg) {
+                const el = document.getElementById("sync-status");
+                const btn = document.getElementById("sync-btn");
+                if (!syncReady()) {
+                    el.textContent = "";
+                    btn.style.display = "none";
+                    return;
+                }
+                btn.style.display = "";
+                const icons = {
+                    idle: "\u2713",
+                    syncing: "\u27f3",
+                    error: "\u2717",
+                    pending: "\u2026",
+                };
+                const colors = {
+                    idle: "#68d391",
+                    syncing: "#63b3ed",
+                    error: "#fc8181",
+                    pending: "#fbd38d",
+                };
+                el.style.color = colors[status] || "#a0aec0";
+                el.textContent = (icons[status] || "?") + (msg ? " " + msg : "");
+            }
+
+            function schedulePush() {
+                if (pushTimer) clearTimeout(pushTimer);
+                setSyncStatus("pending", "Warte\u2026");
+                pushTimer = setTimeout(pushToGist, 2000);
+            }
+
+            async function pushToGist() {
+                if (!syncReady()) return;
+                setSyncStatus("syncing", "Speichern\u2026");
+                const content = JSON.stringify(state, null, 2);
+                try {
+                    const resp = await fetch(
+                        `https://api.github.com/gists/${syncConfig.gistId}`,
+                        {
+                            method: "PATCH",
+                            headers: {
+                                Authorization: `Bearer ${syncConfig.token}`,
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                files: {
+                                    "skilltracker.json": { content },
+                                },
+                            }),
+                        },
+                    );
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const now = new Date().toLocaleTimeString("de-DE", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    });
+                    setSyncStatus("idle", now);
+                } catch (e) {
+                    setSyncStatus("error", e.message);
+                }
+            }
+
+            async function pullFromGist() {
+                if (!syncReady()) return;
+                setSyncStatus("syncing", "Laden\u2026");
+                try {
+                    const resp = await fetch(
+                        `https://api.github.com/gists/${syncConfig.gistId}`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${syncConfig.token}`,
+                            },
+                        },
+                    );
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const gist = await resp.json();
+                    const file = gist.files["skilltracker.json"];
+                    if (!file) {
+                        // First run: no file in Gist yet — push local state to create it
+                        await pushToGist();
+                        return;
+                    }
+                    const remote = JSON.parse(file.content);
+                    const localTs = state.lastModified || 0;
+                    const remoteTs = remote.lastModified || 0;
+                    if (remoteTs > localTs) {
+                        state = remote;
+                        migrateState();
+                        saveLocalOnly();
+                        renderAll();
+                    }
+                    const now = new Date().toLocaleTimeString("de-DE", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    });
+                    setSyncStatus("idle", now);
+                } catch (e) {
+                    setSyncStatus("error", e.message);
+                }
+            }
+
+            async function manualSync() {
+                await pullFromGist();
+                if (syncReady()) await pushToGist();
+            }
+
+            function renderAll() {
+                renderKanban();
+                renderLog();
+            }
+
+            // ========== SETTINGS ==========
+            function renderSettings() {
+                document.getElementById("settings-gist-id").value =
+                    syncConfig.gistId || "";
+                document.getElementById("settings-token").value =
+                    syncConfig.token || "";
+                document.getElementById("settings-device").value =
+                    syncConfig.deviceName || "";
+                document.getElementById("settings-enabled").checked =
+                    syncConfig.enabled !== false;
+                updateSettingsStatus();
+            }
+
+            function saveSettings() {
+                syncConfig.gistId = document
+                    .getElementById("settings-gist-id")
+                    .value.trim();
+                syncConfig.token = document
+                    .getElementById("settings-token")
+                    .value.trim();
+                syncConfig.deviceName = document
+                    .getElementById("settings-device")
+                    .value.trim();
+                syncConfig.enabled = document.getElementById(
+                    "settings-enabled",
+                ).checked;
+                localStorage.setItem(
+                    "skilltracker-sync",
+                    JSON.stringify(syncConfig),
+                );
+                updateSettingsStatus();
+                setSyncStatus(syncReady() ? "idle" : "idle", "");
+            }
+
+            function updateSettingsStatus() {
+                const el = document.getElementById("settings-status");
+                if (!syncConfig.gistId || !syncConfig.token) {
+                    el.style.color = "#718096";
+                    el.textContent = "Kein Sync konfiguriert.";
+                } else if (!syncConfig.enabled) {
+                    el.style.color = "#ed8936";
+                    el.textContent = "Auto-Sync deaktiviert.";
+                } else {
+                    el.style.color = "#38a169";
+                    el.textContent =
+                        "\u2713 Auto-Sync aktiv \u2014 \u00c4nderungen werden nach 2 s gepusht.";
+                }
+            }
+
+            function toggleTokenVisibility() {
+                const input = document.getElementById("settings-token");
+                const btn = document.getElementById("toggle-token-btn");
+                if (input.type === "password") {
+                    input.type = "text";
+                    btn.innerHTML = "&#128584;";
+                } else {
+                    input.type = "password";
+                    btn.innerHTML = "&#128065;";
+                }
+            }
+
+            async function testConnection() {
+                const gistId = document
+                    .getElementById("settings-gist-id")
+                    .value.trim();
+                const token = document
+                    .getElementById("settings-token")
+                    .value.trim();
+                const el = document.getElementById("settings-status");
+                if (!gistId || !token) {
+                    el.style.color = "#e53e3e";
+                    el.textContent = "Bitte Gist ID und Token eingeben.";
+                    return;
+                }
+                el.style.color = "#3182ce";
+                el.textContent = "Verbinde\u2026";
+                try {
+                    const resp = await fetch(
+                        `https://api.github.com/gists/${gistId}`,
+                        { headers: { Authorization: `Bearer ${token}` } },
+                    );
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    el.style.color = "#38a169";
+                    el.textContent = "\u2713 Verbindung erfolgreich!";
+                } catch (e) {
+                    el.style.color = "#e53e3e";
+                    el.textContent = `\u2717 Fehler: ${e.message}`;
+                }
+            }
+
+            // ========== LINKIFY ==========
             function linkify(text) {
                 if (!text) return "";
                 const escaped = text
@@ -736,7 +1149,7 @@ Klick auf "Zusammenfassung generieren"...</pre
                 );
             }
 
-            // -- Get all known skill titles (for picker) --
+            // ========== SKILL TITLES ==========
             function getAllSkillTitles() {
                 const titles = new Set();
                 state.cards.forEach((c) => titles.add(c.title));
@@ -786,7 +1199,6 @@ Klick auf "Zusammenfassung generieren"...</pre
                     });
                 }
 
-                // Drag-and-drop on focus bar
                 const bar = document.getElementById("focus-bar");
                 bar.ondragover = (e) => {
                     e.preventDefault();
@@ -842,7 +1254,6 @@ Klick auf "Zusammenfassung generieren"...</pre
                     btn.onclick = () => openModal(ci);
                     div.appendChild(btn);
 
-                    // Archive section
                     if (archivedCards.length > 0) {
                         const archSec = document.createElement("div");
                         archSec.className = "archive-section";
@@ -880,7 +1291,6 @@ Klick auf "Zusammenfassung generieren"...</pre
                         if (dragCard) {
                             const oldCol = dragCard.col;
                             dragCard.col = ci;
-                            // Column change removes from focus (skill "done" for today)
                             if (oldCol !== ci && isFocused(dragCard.id)) {
                                 state.focused = state.focused.filter(
                                     (f) => f.id !== dragCard.id,
@@ -913,7 +1323,7 @@ Klick auf "Zusammenfassung generieren"...</pre
                 actionsHtml += "</div>";
 
                 el.innerHTML = `${actionsHtml}<div class="tag">${card.tag || "Skill"}</div><p>${card.title}</p><small>${linkify(card.note || "")}</small>`;
-                el.addEventListener("dragstart", (e) => {
+                el.addEventListener("dragstart", () => {
                     dragCard = card;
                     el.style.opacity = "0.5";
                     document
@@ -952,6 +1362,9 @@ Klick auf "Zusammenfassung generieren"...</pre
                         "Neuen Skill hinzuf\u00fcgen";
                     document.getElementById("modal-save-btn").textContent =
                         "Hinzuf\u00fcgen";
+                    ["modal-title", "modal-tag", "modal-note"].forEach(
+                        (id) => (document.getElementById(id).value = ""),
+                    );
                 }
                 document.getElementById("modal").classList.add("open");
             }
@@ -1076,7 +1489,6 @@ Klick auf "Zusammenfassung generieren"...</pre
                     (s) => !selectedSkills.includes(s),
                 );
                 container.innerHTML = "";
-                // Selected chips first
                 selectedSkills.forEach((s) => {
                     const chip = document.createElement("button");
                     chip.className = "skill-picker-chip selected";
@@ -1087,7 +1499,6 @@ Klick auf "Zusammenfassung generieren"...</pre
                     };
                     container.appendChild(chip);
                 });
-                // Available chips
                 allSkills.forEach((s) => {
                     const chip = document.createElement("button");
                     chip.className = "skill-picker-chip";
@@ -1119,7 +1530,6 @@ Klick auf "Zusammenfassung generieren"...</pre
                     .value.trim();
                 if (!learned) return;
 
-                // Combine selected chips + any remaining input text
                 const inputVal = document
                     .getElementById("log-skill")
                     .value.trim();
@@ -1277,6 +1687,7 @@ Klick auf "Zusammenfassung generieren"...</pre
                     .then(() => alert("Kopiert!"));
             }
 
+            // ========== NAVIGATION ==========
             function showView(id, btn) {
                 document
                     .querySelectorAll(".view")
@@ -1290,12 +1701,15 @@ Klick auf "Zusammenfassung generieren"...</pre
                     renderLog();
                     renderSkillChips();
                 }
+                if (id === "settings") renderSettings();
             }
 
-            // Init
+            // ========== INIT ==========
             initSkillPicker();
             renderKanban();
             renderSkillChips();
+            if (syncReady()) setSyncStatus("idle", "");
+            if (syncReady() && syncConfig.enabled) pullFromGist();
         </script>
     </body>
 </html>
